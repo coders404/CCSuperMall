@@ -7,7 +7,7 @@
 		class="content" 
 		ref="scroll" 
 		:probeType="3" 
-		@scroll="contentScroll"
+		@scroll="contentScroll" 
 		:pull-up-load="true"
 		@pullingUp="loadMore"
 		>
@@ -67,19 +67,27 @@ export default {
 	},
 
 	created() {
-		//!异步操作
 		//* 请求多条数据
 		this.getHomeMultidata()
-
 		//* 请求单条数据
 		this.getHomeGoods('pop')
 		this.getHomeGoods('new')
 		this.getHomeGoods('sell')
 	},
+
 	computed: {
 		goodsClick() {
 			return this.goods[this.currentType].list
 		}
+	},
+
+	mounted() {
+		const refresh = this.debounce(this.$refs.scroll.refresh,50)
+		//* 监听图片加载完成状态
+		this.$bus.$on('imgmonitor', () => {
+			//! 执行refresh函数
+			refresh()
+		})
 	},
 
 	methods: {
@@ -98,7 +106,7 @@ export default {
 		},
 
 		backClick() {
-			this.$refs.scroll.scrollTo(0,0)
+			this.$refs.scroll.scrollTo(0, 0)
 		},
 
 		contentScroll(position) {
@@ -106,12 +114,20 @@ export default {
 			this.showBackTop = (-position.y) > 1500
 		},
 
+		//! 封装debounce函数
+		debounce(func, delay) {
+			let timer = null
+			return function (...args) {
+				if (timer) clearTimeout(timer)
+				timer = setTimeout(() => {
+					func.apply(this, args)
+				}, delay);
+			}
+		},
+
+		//! 上拉加载更多
 		loadMore() {
-			// console.log('我现在又被加载了一次 立即执行');
-			//* 这里直接执行之前已经封装好的getHomeGoods函数 数据自动累加 页码加值
 			this.getHomeGoods(this.currentType)
-			//* 图片异步加载完成之后 调用一次方法重新计算一下可滚动区域
-			this.$refs.scroll.bs.refresh()
 		},
 
 		//! 网络请求方法
@@ -128,7 +144,7 @@ export default {
 				// console.log(res);
 				this.goods[type].list.push(...res.data.list)
 				this.goods[type].page += 1
-				//* 在执行完累加操作之后 重新调用一次scroll函数 不重新调用他不会执行第二次
+				//* 加载完成一页之后better-scroll就不会在进行加载了 需要调用finishPullUp 函数重新加载
 				this.$refs.scroll.finishPullUp()
 			})
 		}
@@ -142,6 +158,7 @@ export default {
 	height: 100vh;
 	/* padding-top: 44px; */
 }
+
 .home-nav {
 	background: var(--color-tint);
 	position: fixed;

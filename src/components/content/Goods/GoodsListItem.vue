@@ -1,10 +1,10 @@
 <template>
   <div class="good-item">
-    <img :src="goodsItem.show.img" alt="">
+    <img :src="goodsItem.show.img" alt="" @load="imgmonitor">
     <div class="good-info">
-      <p>{{goodsItem.title}}</p>
-      <span class="price">{{goodsItem.price}}</span>
-      <span class="collect">{{goodsItem.cfav}}</span>
+      <p>{{ goodsItem.title }}</p>
+      <span class="price">{{ goodsItem.price }}</span>
+      <span class="collect">{{ goodsItem.cfav }}</span>
     </div>
   </div>
 </template>
@@ -18,6 +18,11 @@ export default {
         return {}
       }
     }
+  },
+  methods: {
+    imgmonitor() {
+      this.$bus.$emit('imgmonitor')
+    }
   }
 }
 </script>
@@ -27,10 +32,12 @@ export default {
   position: relative;
   width: 48%;
 }
+
 .good-item img {
   width: 100%;
   border-radius: 5px;
 }
+
 .good-info {
   position: absolute;
   font-size: 12px;
@@ -40,19 +47,23 @@ export default {
   overflow: hidden;
   text-align: center;
 }
+
 .good-info p {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   margin-bottom: 3px;
 }
+
 .good-info .price {
   color: var(--color-height-text);
   margin-right: 20px;
 }
+
 .good-info .collect {
   position: relative;
 }
+
 .good-info .collect::before {
   content: "";
   position: absolute;
