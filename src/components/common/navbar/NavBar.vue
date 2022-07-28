@@ -12,7 +12,7 @@
 	}
 </script>
 
-<style>
+<style scoped>
 	.nav-bar {
 		display: flex;
 		height: 44px;
@@ -25,8 +25,8 @@
 	}
 	.center {
 		flex: 1;
-		background-color: #ff8d96;
+		/* background-color: #ff8d96; */
 		font-size: 22px;
-		color: #fff;
+		color: #333;
 	}
 </style>

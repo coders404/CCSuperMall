@@ -33,14 +33,12 @@ export default {
       probeType: this.probeType,
       pullUpLoad: this.pullUpLoad
     })
-
     //* 监听页面距离滚动的视图距离
     if (this.probeType == 2 || this.probeType == 3) {
       this.bs.on('scroll', (position) => {
         this.$emit('scroll', position);
       })
     }
-
     //* 上拉加载 pullingUp
     if (this.pullUpLoad) {
       this.bs.on('pullingUp', () => {
@@ -48,7 +46,6 @@ export default {
       })
     }
   },
-
   methods: {
     //* 封装回到顶部
     scrollTo(x, y, time = 400) {
@@ -60,6 +57,10 @@ export default {
     },
     finishPullUp() {
       this.bs.finishPullUp()
+    },
+    //* 封装距离Y轴的距离 scroll里面y是记录Y轴的
+    getScrollY() {
+      return this.bs.y
     }
   }
 

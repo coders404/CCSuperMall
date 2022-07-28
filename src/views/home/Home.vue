@@ -3,21 +3,38 @@
 		<nav-bar class="home-nav">
 			<div slot="center">购物车</div>
 		</nav-bar>
+		<!--这里是直接复制出来一份 实现吸顶效果 -->
+		<tab-controller 
+				:titles="['新款', '流行', '精选']" 
+				@addClick="tabClick" 
+				ref="tabControl1"
+				class="tab-control"
+				v-show="tabFixed"
+				></tab-controller>
 		<scroll 
-		class="content" 
-		ref="scroll" 
-		:probeType="3" 
-		@scroll="contentScroll" 
-		:pull-up-load="true"
-		@pullingUp="loadMore"
-		>
-			<home-swiper :banners="banners"></home-swiper>
+			class="content" 
+			ref="scroll" 
+			:probeType="3" 
+			@scroll="contentScroll" 
+			:pull-up-load="true"
+			@pullingUp="loadMore">
+			<home-swiper 
+				:banners="banners" 
+				@swiperImageLoad="swiperImageLoad"
+				ref="swiper"
+			></home-swiper>
 			<home-recommend-view :recommends="recommends"></home-recommend-view>
 			<home-feature />
-			<tab-controller :titles="['新款', '流行', '精选']" @addClick="tabClick"></tab-controller>
+			<tab-controller 
+				:titles="['新款', '流行', '精选']" 
+				@addClick="tabClick" 
+				ref="tabControl2"
+				></tab-controller>
 			<goods-list :goods="goodsClick"></goods-list>
 		</scroll>
-		<back-top @click.native="backClick" v-show="showBackTop"></back-top>
+		<back-top 
+			@click.native="backClick" 
+			v-show="showBackTop"></back-top>
 	</div>
 </template>
 
@@ -50,7 +67,6 @@ export default {
 		Scroll,
 		BackTop
 	},
-
 	data() {
 		return {
 			banners: [],
@@ -62,10 +78,12 @@ export default {
 			},
 			//! 设置一个仓库 存储每次的状态
 			currentType: 'pop',
-			showBackTop: false
+			showBackTop: false,
+			offsetTop: 0,
+			tabFixed: false,
+			scrollY: 0
 		}
 	},
-
 	created() {
 		//* 请求多条数据
 		this.getHomeMultidata()
@@ -74,13 +92,17 @@ export default {
 		this.getHomeGoods('new')
 		this.getHomeGoods('sell')
 	},
-
+	activated() {
+		this.$refs.scroll.bs.scrollTo(0,this.scrollY,0)
+	},
+	deactivated() {
+		this.scrollY = this.$refs.scroll.getScrollY()
+	},
 	computed: {
 		goodsClick() {
 			return this.goods[this.currentType].list
 		}
 	},
-
 	mounted() {
 		const refresh = this.debounce(this.$refs.scroll.refresh,50)
 		//* 监听图片加载完成状态
@@ -89,7 +111,6 @@ export default {
 			refresh()
 		})
 	},
-
 	methods: {
 		//! 事件监听相关的方法
 		tabClick(index) {
@@ -103,15 +124,25 @@ export default {
 				case 2:
 					this.currentType = 'sell'
 			}
+			//! 这两个参数是为了实现路由统一性 和顶部路由实现一致性
+			this.$refs.tabControl1.currentIndex = index
+			this.$refs.tabControl2.currentIndex = index
 		},
-
 		backClick() {
 			this.$refs.scroll.scrollTo(0, 0)
 		},
-
 		contentScroll(position) {
-			//* 细节 换我肯定想不到 太细了
+			//* 细节隐式转换
 			this.showBackTop = (-position.y) > 1500
+			this.tabFixed = (-position.y) > this.offsetTop
+		},
+		swiperImageLoad() {
+			//! 组件里面通过$el获取元素
+			this.offsetTop = this.$refs.tabControl2.$el.offsetTop
+		},
+			//! 上拉加载更多
+		loadMore() {
+			this.getHomeGoods(this.currentType)
 		},
 
 		//! 封装debounce函数
@@ -124,20 +155,13 @@ export default {
 				}, delay);
 			}
 		},
-
-		//! 上拉加载更多
-		loadMore() {
-			this.getHomeGoods(this.currentType)
-		},
-
-		//! 网络请求方法
+		//! 网路请求封装相关方法
 		getHomeMultidata() {
 			getHomeMultidata().then(res => {
 				this.banners = res.data.banner.list
 				this.recommends = res.data.recommend.list
 			})
 		},
-
 		getHomeGoods(type) {
 			const page = this.goods[type].page + 1
 			getHomeGoods(type, page).then(res => {
@@ -158,19 +182,28 @@ export default {
 	height: 100vh;
 	/* padding-top: 44px; */
 }
-
 .home-nav {
 	background: var(--color-tint);
-	position: fixed;
+	/*使用原生滚动的时候需要固定定位 使用better-scroll实现了局部滚动  就不需要使用固定定位 */
+	/* position: fixed; */
 	left: 0;
 	top: 0;
 	right: 0;
 	z-index: 10;
 }
-
 .content {
 	height: calc(100% - 93px);
 	margin-top: 44px;
 	overflow: hidden;
+	position: absolute;
+	bottom: 49px;
+}
+.tab-control {
+	position: relative;
+	z-index: 10;
+	background-color: #fff;
+	height: 30px;
+	margin-top: -1px;
+	padding-top: 5px;
 }
 </style>

@@ -1,5 +1,7 @@
 <template>
-  <div class="good-item">
+  <div 
+    class="good-item" 
+    @click="itemClick">
     <img :src="goodsItem.show.img" alt="" @load="imgmonitor">
     <div class="good-info">
       <p>{{ goodsItem.title }}</p>
@@ -9,8 +11,13 @@
   </div>
 </template>
 <script>
+import Detail from 'views/detail/Detail'
+
 export default {
   name: 'GoodsListItem',
+  components: {
+    Detail
+  },
   props: {
     goodsItem: {
       type: Object,
@@ -20,13 +27,17 @@ export default {
     }
   },
   methods: {
+    //! 事件监听方法
     imgmonitor() {
       this.$bus.$emit('imgmonitor')
+    },
+    itemClick() {
+      this.$router.push('/detail/' + this.goodsItem.iid)
     }
   }
 }
 </script>
-<style>
+<style scoped>
 .good-item {
   padding-bottom: 40px;
   position: relative;
