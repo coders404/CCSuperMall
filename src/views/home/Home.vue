@@ -47,12 +47,13 @@ import HomeFeature from './childComps/HomeFeature.vue'
 //! content_项目复用组件
 import TabController from 'components/content/TabController'
 import GoodsList from 'components/content/Goods/GoodsList.vue'
-import BackTop from 'components/content/BackTop.vue'
 
 //! common_多项目复用组件
 import NavBar from 'components/common/navbar/NavBar.vue'
 import { getHomeMultidata, getHomeGoods } from 'network/home'
 import Scroll from 'components/common/scroll/Scroll.vue'
+
+import {mixin} from 'assets/common/mixin'
 
 export default {
 	name: "Home",
@@ -64,9 +65,9 @@ export default {
 		TabController,
 		GoodsList,
 		NavBar,
-		Scroll,
-		BackTop
+		Scroll
 	},
+	mixins:[mixin],
 	data() {
 		return {
 			banners: [],
@@ -78,7 +79,6 @@ export default {
 			},
 			//! 设置一个仓库 存储每次的状态
 			currentType: 'pop',
-			showBackTop: false,
 			offsetTop: 0,
 			tabFixed: false,
 			scrollY: 0
@@ -128,11 +128,8 @@ export default {
 			this.$refs.tabControl1.currentIndex = index
 			this.$refs.tabControl2.currentIndex = index
 		},
-		backClick() {
-			this.$refs.scroll.scrollTo(0, 0)
-		},
 		contentScroll(position) {
-			//* 细节隐式转换
+			//* 细节隐式转换 回到顶部
 			this.showBackTop = (-position.y) > 1500
 			this.tabFixed = (-position.y) > this.offsetTop
 		},
@@ -157,7 +154,7 @@ export default {
 		},
 		//! 网路请求封装相关方法
 		getHomeMultidata() {
-			getHomeMultidata().then(res => {
+			getHomeMultidata().then( res => {
 				this.banners = res.data.banner.list
 				this.recommends = res.data.recommend.list
 			})

@@ -35,6 +35,7 @@ export default {
     })
     //* 监听页面距离滚动的视图距离
     if (this.probeType == 2 || this.probeType == 3) {
+    //* 监听滚动--->
       this.bs.on('scroll', (position) => {
         this.$emit('scroll', position);
       })
@@ -58,7 +59,7 @@ export default {
     finishPullUp() {
       this.bs.finishPullUp()
     },
-    //* 封装距离Y轴的距离 scroll里面y是记录Y轴的
+    //* 封装距离Y轴的距离 scroll里面y是记录Y轴距离Top <---> removing
     getScrollY() {
       return this.bs.y
     }

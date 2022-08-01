@@ -14,10 +14,9 @@ export function request(config){
         });
 
         install.interceptors.response.use(data=>{
-            return data.data;
+            return data.data
         },err=>{
-            console.log(err);
-            
+            console.log(err)
         })
     
        return install(config)

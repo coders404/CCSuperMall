@@ -33,6 +33,7 @@ export default {
   methods: {
     titleClick(index) {
       this.currentIndex = index
+      this.$emit('navClick',index)
     },
     backClick() {
       this.$router.back()
@@ -45,9 +46,6 @@ export default {
 .title {
   display: flex;
   font-size: 15px;
-  /*看个人审美 可加 */
-  /* padding-left: 40px;
-  padding-right: 40px; */
 }
 .title-item {
   flex: 1;
