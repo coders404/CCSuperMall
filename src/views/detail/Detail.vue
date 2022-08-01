@@ -68,7 +68,7 @@ export default {
       commentsInfo: {},
       recommends: {},//!商品推荐信息
       recommend: [],
-      navOffTopsY: [],//! 存储navTbar跳转信息
+      navOffTopsY: [],//! 存储navbar跳转信息
       currentIndex: null
     }
   },

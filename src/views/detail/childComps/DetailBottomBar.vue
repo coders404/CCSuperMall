@@ -31,7 +31,7 @@ export default {
 <style scoped>
 .bottombar{
   width: 100%;
-   height: 60px; 
+   height: 70px; 
    background-color: #fff;
    position: fixed;
    left: 0;
@@ -62,9 +62,10 @@ export default {
 }
 .right{
 width: 50%;
+height: 60px;
 display: flex;
 text-align: center;
-line-height: 58px;
+line-height: 60px;
 }
 .cart{ 
     flex: 1;
