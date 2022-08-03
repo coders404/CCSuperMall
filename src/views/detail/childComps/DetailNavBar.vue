@@ -28,6 +28,7 @@ export default {
     return {
       titles: ['商品','参数','评论','推荐'],
       currentIndex: 0
+      
     }
   },
   methods: {
